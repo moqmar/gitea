@@ -8,6 +8,8 @@ import (
 	"path/filepath"
 	"strings"
 
+	"github.com/cactus/go-camo/pkg/camo/encoding"
+
 	"code.gitea.io/gitea/modules/log"
 )
 
@@ -84,7 +86,13 @@ func render(parser Parser, rawBytes []byte, urlPrefix string, metas map[string]s
 	if err != nil {
 		log.Error("PostProcess: %v", err)
 	}
-	return SanitizeBytes(result)
+	return camoURL("http://127.0.0.1:3456","jo","http://golang.org/doc/gopher/frontpage.png")
+}
+
+func camoURL(camobind, camokey, oURL  string) []byte {
+  //result string = encoding.B64EncodeURL( []byte(camokey), oURL)
+	//result = encoding.HexEncodeURL( []byte(camokey), oURL)
+	return []byte(camobind+encoding.B64EncodeURL( []byte(camokey), oURL))
 }
 
 func renderByType(tp string, rawBytes []byte, urlPrefix string, metas map[string]string, isWiki bool) []byte {
