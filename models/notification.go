@@ -15,6 +15,8 @@ type (
 	NotificationStatus uint8
 	// NotificationSource is the source of the notification (issue, PR, commit, etc)
 	NotificationSource uint8
+	// NotificationReason is the reason of the notification (These correspond to events that trigger a notification)
+	NotificationReason uint8
 )
 
 const (
@@ -33,6 +35,31 @@ const (
 	NotificationSourcePullRequest
 	// NotificationSourceCommit is a notification of a commit
 	NotificationSourceCommit
+)
+
+const (
+	// NotificationReasonAssign You were assigned to the issue
+	NotificationReasonAssign NotificationReason = iota + 1
+	// NotificationReasonAuthor You created the thread
+	NotificationReasonAuthor
+	// NotificationReasonComment You commented on the thread
+	NotificationReasonComment
+	// NotificationReasonInvitation You accepted an invitation to contribute to the repository
+	NotificationReasonInvitation
+	// NotificationReasonManual You subscribed to the thread manual
+	NotificationReasonManual
+	// NotificationReasonMention You were specifically @mentioned in the content
+	NotificationReasonMention
+	// NotificationReasonReviewRequested You, or a team you're a member of, were requested to review a pull request
+	NotificationReasonReviewRequested
+	// NotificationReasonSecurityAlert a security vulnerability was discovered in your repository
+	NotificationReasonSecurityAlert
+	// NotificationReasonStateChange You changed the thread state
+	NotificationReasonStateChange
+	// NotificationReasonSubscribed You're watching the repository
+	NotificationReasonSubscribed
+	// NotificationReasonTeamMention You were on a team that was mentioned
+	NotificationReasonTeamMention
 )
 
 // Notification represents a notification
@@ -526,4 +553,34 @@ func UpdateNotificationStatuses(user *User, currentStatus NotificationStatus, de
 		Cols("status", "updated_by", "updated_unix").
 		Update(n)
 	return err
+}
+
+// String print string of NotificationReason
+func (r NotificationReason) String() string {
+	switch r {
+	case NotificationReasonAssign:
+		return "assign"
+	case NotificationReasonAuthor:
+		return "author"
+	case NotificationReasonComment:
+		return "comment"
+	case NotificationReasonInvitation:
+		return "invitation"
+	case NotificationReasonManual:
+		return "manual"
+	case NotificationReasonMention:
+		return "mention"
+	case NotificationReasonReviewRequested:
+		return "review_requested"
+	case NotificationReasonSecurityAlert:
+		return "security_alert"
+	case NotificationReasonStateChange:
+		return "state_change"
+	case NotificationReasonSubscribed:
+		return "subscribed"
+	case NotificationReasonTeamMention:
+		return "team_mention"
+	default:
+		return ""
+	}
 }
