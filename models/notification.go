@@ -70,6 +70,7 @@ type Notification struct {
 
 	Status NotificationStatus `xorm:"SMALLINT INDEX NOT NULL"`
 	Source NotificationSource `xorm:"SMALLINT INDEX NOT NULL"`
+	Reason NotificationReason `xorm:"SMALLINT INDEX NOT NULL"`
 
 	IssueID   int64  `xorm:"INDEX NOT NULL"`
 	CommitID  string `xorm:"INDEX"`
