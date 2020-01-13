@@ -39,6 +39,7 @@ type Issue struct {
 	Title            string     `xorm:"name"`
 	Content          string     `xorm:"TEXT"`
 	RenderedContent  string     `xorm:"-"`
+	Confidential     bool       `xorm:"NOT NULL DEFAULT false"` // Issue is only visible for repo owner and creator
 	Labels           []*Label   `xorm:"-"`
 	MilestoneID      int64      `xorm:"INDEX"`
 	Milestone        *Milestone `xorm:"-"`
@@ -1104,6 +1105,7 @@ type IssuesOptions struct {
 	RepoIDs     []int64 // include all repos if empty
 	AssigneeID  int64
 	PosterID    int64
+	Actor       *User // show confidential issues too
 	MentionedID int64
 	MilestoneID int64
 	Page        int
@@ -1208,6 +1210,12 @@ func (opts *IssuesOptions) setupSession(sess *xorm.Session) {
 			}
 		}
 	}
+
+	sess.And("issue.confidential = ?", false)
+	if opts.Actor != nil {
+		sess.Or(builder.Eq{"issue.confidential": false}.And(builder.Eq{"issue.poster_id":opts.Actor.ID}.Or(builder.In("issue.repo_id = is un actor.repoid-where-he-has-owner-rights"))))
+	}
+
 }
 
 // CountIssuesByRepo map from repoID to number of issues matching the options
@@ -1346,6 +1354,7 @@ type IssueStatsOptions struct {
 	PosterID    int64
 	IsPull      util.OptionalBool
 	IssueIDs    []int64
+	Actor       *User // count confidential issues too
 }
 
 // GetIssueStats returns issue statistic information by given conditions.
@@ -1402,6 +1411,11 @@ func GetIssueStats(opts *IssueStatsOptions) (*IssueStats, error) {
 			sess.And("issue.is_pull=?", false)
 		}
 
+		sess.And("issue.confidential = ?", false)
+		if opts.Actor != nil {
+			sess.Or(builder.Eq{"issue.confidential": false}.And(builder.Eq{"issue.poster_id":opts.Actor.ID}.Or(builder.In("issue.repo_id = is un actor.repoid-where-he-has-owner-rights"))))
+		}
+
 		return sess
 	}
 
@@ -1438,6 +1452,8 @@ func GetUserIssueStats(opts UserIssueStatsOptions) (*IssueStats, error) {
 	if len(opts.RepoIDs) > 0 {
 		cond = cond.And(builder.In("issue.repo_id", opts.RepoIDs))
 	}
+
+	cond.And(builder.Eq{"issue.confidential": false}).Or(builder.Eq{"issue.confidential": false}.And(builder.Eq{"issue.poster_id":opts.UserID}.Or(builder.In("issue.repo_id = is un actor.repoid-where-he-has-owner-rights"))))
 
 	switch opts.FilterMode {
 	case FilterModeAll:
@@ -1607,7 +1623,7 @@ func UpdateIssueByAPI(issue *Issue) error {
 
 	if _, err := sess.ID(issue.ID).Cols(
 		"name", "is_closed", "content", "milestone_id", "priority",
-		"deadline_unix", "updated_unix", "closed_unix", "is_locked").
+		"deadline_unix", "updated_unix", "closed_unix", "is_locked", "confidential").
 		Update(issue); err != nil {
 		return err
 	}
