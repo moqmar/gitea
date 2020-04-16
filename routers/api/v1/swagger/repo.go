@@ -254,6 +254,13 @@ type swaggerCommitList struct {
 	Body []api.Commit `json:"body"`
 }
 
+// Compare
+// swagger:response Compare
+type swaggerCompare struct {
+	//in: body
+	Body api.Compare `json:"body"`
+}
+
 // EmptyRepository
 // swagger:response EmptyRepository
 type swaggerEmptyRepository struct {
