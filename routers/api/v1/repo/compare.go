@@ -127,7 +127,7 @@ func parseCompareDiffInfo(ctx *context.APIContext) (*models.User, *models.Reposi
 
 	// Check if base branch is valid.
 	baseIs := make(map[string]bool, 3)
-	baseIs["commit"], baseIs["branch"], baseIs["tag"], hasErr = checkBranch(ctx, ctx.Repo.GitRepo, baseBranch)
+	baseBranch, baseIs["commit"], baseIs["branch"], baseIs["tag"], hasErr = checkBranch(ctx, ctx.Repo.GitRepo, baseBranch)
 	if hasErr {
 		return nil, nil, nil, nil, "", "", nil, nil, true
 	}
@@ -187,7 +187,7 @@ func parseCompareDiffInfo(ctx *context.APIContext) (*models.User, *models.Reposi
 
 	// Check if head branch is valid.
 	headIs := make(map[string]bool, 3)
-	headIs["commit"], headIs["branch"], headIs["tag"], hasErr = checkBranch(ctx, headGitRepo, headBranch)
+	headBranch, headIs["commit"], headIs["branch"], headIs["tag"], hasErr = checkBranch(ctx, headGitRepo, headBranch)
 	if hasErr {
 		return nil, nil, nil, nil, "", "", nil, nil, true
 	}
@@ -247,7 +247,7 @@ func parseParams(ctx *context.APIContext, baseRepo *models.Repository) (*models.
 	return headUser, baseBranch, headBranch, isSameRepo, false
 }
 
-func checkBranch(ctx *context.APIContext, gitRepo *git.Repository, branch string) (bool, bool, bool, bool) {
+func checkBranch(ctx *context.APIContext, gitRepo *git.Repository, branch string) (string, bool, bool, bool, bool) {
 	isCommit := gitRepo.IsCommitExist(branch)
 	isBranch := gitRepo.IsBranchExist(branch)
 	isTag := gitRepo.IsTagExist(branch)
@@ -258,10 +258,10 @@ func checkBranch(ctx *context.APIContext, gitRepo *git.Repository, branch string
 			isCommit = true
 		} else {
 			ctx.NotFound("IsRefExist", nil)
-			return false, false, false, true
+			return "", false, false, false, true
 		}
 	}
-	return isCommit, isBranch, isTag, false
+	return branch, isCommit, isBranch, isTag, false
 }
 
 func prepareCompareDiff(
