@@ -90,10 +90,7 @@ func parseBaseRepoInfo(ctx *context.APIContext, headRepo *models.Repository) err
 	if !headRepo.IsFork {
 		return nil
 	}
-	if err := headRepo.GetBaseRepo(); err != nil {
-		return err
-	}
-	return nil
+	return headRepo.GetBaseRepo()
 }
 
 func toCompare(ctx *context.APIContext, compare *api.Compare, compareInfo *git.CompareInfo, headCommitID, baseCommitID string, diff *gitdiff.Diff, commitCount int, headTarget string) error {
@@ -106,10 +103,7 @@ func toCompare(ctx *context.APIContext, compare *api.Compare, compareInfo *git.C
 	}
 
 	// Generate the Diff in the compare.
-	if err := toDiff(ctx, compare, diff); err != nil {
-		return err
-	}
-	return nil
+	return toDiff(ctx, compare, diff)
 }
 
 func parseCompareDiffInfo(ctx *context.APIContext) (*models.User, *models.Repository, *git.Repository, *git.CompareInfo, string, string, map[string]bool, map[string]bool, bool) {
