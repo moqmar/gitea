@@ -61,7 +61,7 @@ type Diff struct {
 type Compare struct {
 	Title        string    `json:"title"`
 	Commits      []*Commit `json:"commits"`
-	CommitCount  int       `json:"commit_count"`
+	CommitCount  int       `json:"total_commits"`
 	Diff         *Diff     `json:"diff"`
 	BaseCommitID string    `json:"base_commit_id"`
 	HeadCommitID string    `json:"head_commit_id"`
