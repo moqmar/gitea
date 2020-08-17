@@ -940,7 +940,6 @@ func RegisterRoutes(m *macaron.Macaron) {
 		m.Group("", func() {
 			m.Get("/^:type(issues|pulls)$", repo.Issues)
 			m.Get("/^:type(issues|pulls)$/:index", repo.ViewIssue)
-			m.Get("/^:type(issues|pulls)$/:index/sidebar/:sidebar", repo.ViewIssue)
 			m.Get("/labels/", reqRepoIssuesOrPullsReader, repo.RetrieveLabels, repo.Labels)
 			m.Get("/milestones", reqRepoIssuesOrPullsReader, repo.Milestones)
 		}, context.RepoRef())
@@ -957,11 +956,11 @@ func RegisterRoutes(m *macaron.Macaron) {
 
 					m.Get("/edit", repo.EditProject)
 					m.Post("/edit", bindIgnErr(auth.CreateProjectForm{}), repo.EditProjectPost)
-					m.Put("/updateIssuesPriorities", bindIgnErr(auth.UpdateIssuePriorityBoardForm{}), repo.UpdateBoardIssuePriority)
+					m.Put("/issue/priority", bindIgnErr(auth.UpdateIssuePriorityBoardForm{}), repo.UpdateBoardIssuePriority)
 					m.Post("/^:action(open|close)$", repo.ChangeProjectStatus)
 
 					m.Group("/:boardID", func() {
-						m.Put("updatePriorities", bindIgnErr(auth.UpdateBoardPriorityForm{}), repo.UpdateBoardsPriorityPost)
+						m.Put("board/priority", bindIgnErr(auth.UpdateBoardPriorityForm{}), repo.UpdateBoardsPriorityPost)
 						m.Put("", bindIgnErr(auth.EditProjectBoardTitleForm{}), repo.EditProjectBoardTitle)
 						m.Delete("", repo.DeleteProjectBoard)
 
