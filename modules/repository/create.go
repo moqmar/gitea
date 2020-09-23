@@ -40,7 +40,6 @@ func CreateRepository(doer, u *models.User, opts models.CreateRepoOptions) (_ *m
 		IsFsckEnabled:                   !opts.IsMirror,
 		CloseIssuesViaCommitInAnyBranch: setting.Repository.DefaultCloseIssuesViaCommitsInAnyBranch,
 		IsHookTaskPurgeEnabled:          setting.Repository.DefaultIsHookTaskPurgeEnabled,
-		NumberWebhookDeliveriesToKeep:   setting.Repository.DefaultNumberWebhookDeliveriesToKeep,
 		Status:                          opts.Status,
 		IsEmpty:                         !opts.AutoInit,
 		TrustModel:                      opts.TrustModel,

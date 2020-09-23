@@ -238,7 +238,7 @@ type Repository struct {
 	IsFsckEnabled                   bool               `xorm:"NOT NULL DEFAULT true"`
 	CloseIssuesViaCommitInAnyBranch bool               `xorm:"NOT NULL DEFAULT false"`
 	IsHookTaskPurgeEnabled          bool               `xorm:"NOT NULL DEFAULT true"`
-	NumberWebhookDeliveriesToKeep   int64              `xorm:"NOT NULL DEFAULT 10"`
+	NumberWebhookDeliveriesToKeep   int64              `xorm:"NOT NULL DEFAULT -1"`
 	Topics                          []string           `xorm:"TEXT JSON"`
 
 	TrustModel TrustModelType

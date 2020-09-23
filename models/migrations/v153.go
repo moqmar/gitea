@@ -14,7 +14,7 @@ func addHookTaskPurge(x *xorm.Engine) error {
 	type Repository struct {
 		ID                            int64 `xorm:"pk autoincr"`
 		IsHookTaskPurgeEnabled        bool  `xorm:"NOT NULL DEFAULT true"`
-		NumberWebhookDeliveriesToKeep int64 `xorm:"NOT NULL DEFAULT 10"`
+		NumberWebhookDeliveriesToKeep int64 `xorm:"NOT NULL DEFAULT -1"`
 	}
 
 	if err := x.Sync2(new(Repository)); err != nil {

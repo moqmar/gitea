@@ -10,6 +10,7 @@ import (
 
 	"code.gitea.io/gitea/models"
 	"code.gitea.io/gitea/modules/log"
+	"code.gitea.io/gitea/modules/setting"
 
 	"xorm.io/builder"
 )
@@ -21,7 +22,7 @@ func PruneHookTaskTable(ctx context.Context) error {
 	if err := models.Iterate(
 		models.DefaultDBContext(),
 		new(models.Repository),
-		builder.Expr("id>0 AND is_hook_task_purge_enabled=?", true),
+		builder.Gt{"ID": 0}.And(builder.Eq{"is_hook_task_purge_enabled": true}),
 		func(idx int, bean interface{}) error {
 			select {
 			case <-ctx.Done():
@@ -29,6 +30,9 @@ func PruneHookTaskTable(ctx context.Context) error {
 			default:
 			}
 			repo := bean.(*models.Repository)
+			if repo.NumberWebhookDeliveriesToKeep < 0 {
+				repo.NumberWebhookDeliveriesToKeep = setting.Repository.DefaultNumberWebhookDeliveriesToKeep
+			}
 			repoPath := repo.RepoPath()
 			log.Trace("Running prune hook_task table on repository %s", repoPath)
 			if err := models.DeleteDeliveredHookTasks(repo.ID, repo.NumberWebhookDeliveriesToKeep); err != nil {
