@@ -22,7 +22,7 @@ func PruneHookTaskTable(ctx context.Context) error {
 	if err := models.Iterate(
 		models.DefaultDBContext(),
 		new(models.Repository),
-		builder.Gt{"ID": 0}.And(builder.Eq{"is_hook_task_purge_enabled": true}),
+		builder.Gt{"id": 0}.And(builder.Eq{"is_hook_task_purge_enabled": true}),
 		func(idx int, bean interface{}) error {
 			select {
 			case <-ctx.Done():
