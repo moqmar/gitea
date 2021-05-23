@@ -11,6 +11,7 @@ require (
 	gitea.com/go-chi/captcha v0.0.0-20210110083842-e7696c336a1e
 	gitea.com/go-chi/session v0.0.0-20210108030337-0cb48c5ba8ee
 	gitea.com/lunny/levelqueue v0.3.0
+	gitee.com/openeuler/go-gitee v0.0.0-20210427125813-de0b78ea30e9 // indirect
 	github.com/Microsoft/go-winio v0.4.18 // indirect
 	github.com/NYTimes/gziphandler v1.1.1
 	github.com/PuerkitoBio/goquery v1.5.1
