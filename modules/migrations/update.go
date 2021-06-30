@@ -33,6 +33,13 @@ func UpdateMigrationPosterIDAll(ctx context.Context) error {
 	return nil
 }
 
+// ### First Step ###:
+/*
+-> func GetReposByOauth2Source(oauth2ID) []repoIDs
+-> func GetOauth2ByRepoID(repoID) oauth2ID
+(at the momend done by 'structs.GitServiceType' but there is more than one gitea/gitlab/...)
+ */
+
 // ToDo UpdateMigrationPosterIDByRepo(repo)
 // **for a sepcific repo**
 // -> check if there is a configured Oauth2 source who match base url
