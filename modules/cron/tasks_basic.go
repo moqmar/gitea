@@ -105,7 +105,7 @@ func registerUpdateMigrationPosterID() {
 		RunAtStart: true,
 		Schedule:   "@every 24h",
 	}, func(ctx context.Context, _ *models.User, _ Config) error {
-		return migrations.UpdateMigrationPosterID(ctx)
+		return migrations.UpdateMigrationPosterIDAll(ctx)
 	})
 }
 

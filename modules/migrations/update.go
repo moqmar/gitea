@@ -12,13 +12,18 @@ import (
 	"code.gitea.io/gitea/modules/structs"
 )
 
-// UpdateMigrationPosterID updates all migrated repositories' issues and comments posterID
-func UpdateMigrationPosterID(ctx context.Context) error {
+// UpdateMigrationPosterIDAll updates all migrated repositories' issues and comments posterID
+// **for Cron Job only**
+// 1. Itterate throu all repos who are migrated from structs.SupportedFullGitService   ->>>> use UpdateMigrationPosterIDByRepo(repo)
+// -> check if there is a configured Oauth2 source who match base url
+//  -> or each repo-content (issue/pull/reactions/ ...)
+//    -> QueryMatch Oauth2-user-id and PosterID  of repo -> matches get replaced by matching user of Oauth2-User account
+func UpdateMigrationPosterIDAll(ctx context.Context) error {
 	for _, gitService := range structs.SupportedFullGitService {
 		select {
 		case <-ctx.Done():
-			log.Warn("UpdateMigrationPosterID aborted before %s", gitService.Name())
-			return models.ErrCancelledf("during UpdateMigrationPosterID before %s", gitService.Name())
+			log.Warn("UpdateMigrationPosterIDAll aborted before %s", gitService.Name())
+			return models.ErrCancelledf("during UpdateMigrationPosterIDAll before %s", gitService.Name())
 		default:
 		}
 		if err := updateMigrationPosterIDByGitService(ctx, gitService); err != nil {
@@ -27,6 +32,18 @@ func UpdateMigrationPosterID(ctx context.Context) error {
 	}
 	return nil
 }
+
+// ToDo UpdateMigrationPosterIDByRepo(repo)
+// **for a sepcific repo**
+// -> check if there is a configured Oauth2 source who match base url
+//  -> or each repo-content (issue/pull/reactions/ ...)
+//    -> QueryMatch Oauth2-user-id and PosterID  of repo -> matches get replaced by matching user of Oauth2-User account
+
+// ToDo UpdateMigrationPosterIDByOauth2User(user)
+// **get exec after new user with Oauth2 was created or Oauth2 was linked to a user**
+// -> get all repos who have same base url as Oauth2 source
+//  -> or each repo-content (issue/pull/reactions/ ...)
+//    -> QueryMatch Oauth2-user-id and PosterID  of repo -> matches get replaced by matching user of Oauth2-User account
 
 func updateMigrationPosterIDByGitService(ctx context.Context, tp structs.GitServiceType) error {
 	provider := tp.Name()
